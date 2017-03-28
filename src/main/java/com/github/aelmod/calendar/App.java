@@ -3,7 +3,6 @@ package com.github.aelmod.calendar;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.Objects;
 
 public class App {
 
@@ -11,11 +10,12 @@ public class App {
 
     public void run(YearMonth yearMonth) {
         int daysInMonth = yearMonth.lengthOfMonth();
-
-        String[][] calendarPage = new String[6][DayOfWeek.values().length];
-        calendarPage[0] = getHeader();
-
         int weekStartsOf = yearMonth.atDay(1).getDayOfWeek().getValue() - 1;
+
+        int rowNumber = (int) Math.ceil((weekStartsOf + daysInMonth) / 7.0) + 1;
+
+        String[][] calendarPage = new String[rowNumber][7];
+        calendarPage[0] = getHeader();
 
         for (int i = weekStartsOf; i < daysInMonth + weekStartsOf; i++) {
             calendarPage[i / 7 + 1][i % 7] = String.valueOf(i - weekStartsOf + 1);
@@ -37,8 +37,7 @@ public class App {
         Grid grid = new Grid(System.out, getLongestDayTitle() + HORIZONTAL_PADDING, 1);
 
         grid.setHeaderFormatter((cell, rowNumber, columnNumber) -> {
-            if (Objects.equals(cell, DayOfWeek.SUNDAY.toString())) return ConsoleUtils.Color.red(cell);
-            if (Objects.equals(cell, DayOfWeek.SATURDAY.toString())) return ConsoleUtils.Color.red(cell);
+            if (columnNumber == 5 || columnNumber == 6) return ConsoleUtils.Color.red(cell);
             return cell;
         });
 
