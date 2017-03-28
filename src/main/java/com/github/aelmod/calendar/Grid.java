@@ -1,7 +1,6 @@
 package com.github.aelmod.calendar;
 
 import java.io.PrintStream;
-import java.util.List;
 import java.util.Objects;
 
 public class Grid {
@@ -60,14 +59,14 @@ public class Grid {
         this.cellFormatter = cellFormatter;
     }
 
-    public void render(List<String[]> grid) {
-        int sepLength = (width + horizontalSeparator.length()) * grid.get(0).length;
+    public void render(String[][] grid) {
+        int sepLength = (width + horizontalSeparator.length()) * grid[0].length;
         topHorizontalSeparator(sepLength);
-        for (int i = 0; i < grid.size(); i++) {
-            int cellCount = grid.get(i).length;
+        for (int i = 0; i < grid.length; i++) {
+            int cellCount = grid[i].length;
             topVerticalSeparator(cellCount);
             for (int j = 0; j < cellCount; j++) {
-                String value = grid.get(i)[j];
+                String value = grid[i][j];
                 if (Objects.isNull(value)) value = "";
                 value = map(value, i, j);
 

@@ -3,9 +3,6 @@ package com.github.aelmod.calendar;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public class App {
@@ -21,28 +18,20 @@ public class App {
 
         int daysInMonth = 0;
         int tmpCounter = 1;
-        String[][] days = new String[5][DayOfWeek.values().length];
-        for (int i = 0; i < days.length; i++) {
-            for (int j = 0; j < days[i].length; j++) {
+        String[][] calendarPage = new String[6][DayOfWeek.values().length];
+        calendarPage[0] = getHeader();
+        for (int i = 1; i < calendarPage.length; i++) {
+            for (int j = 0; j < calendarPage[i].length; j++) {
                 if (tmpCounter < dayOfWeek) {
                     tmpCounter++;
                     continue;
                 }
-                days[i][j] = "" + (daysInMonth + 1);
+                calendarPage[i][j] = "" + (daysInMonth + 1);
                 daysInMonth++;
                 if (daysInMonth == month.length(leapYear)) break;
             }
         }
-        renderGrid(addHeader(toList(days)), dayOfMonth, dayOfWeek);
-    }
-
-    private List<String[]> addHeader(List<String[]> days) {
-        days.add(0, getHeader());
-        return days;
-    }
-
-    private List<String[]> toList(String[][] days) {
-        return new ArrayList<>(Arrays.asList(days));
+        renderGrid(calendarPage, dayOfMonth, dayOfWeek);
     }
 
     private String[] getHeader() {
@@ -54,8 +43,8 @@ public class App {
         return header;
     }
 
-    private void renderGrid(List<String[]> days, int dayOfMonth, int dayOfWeek) {
-        Grid grid = new Grid(System.out, getMaxDayNameLength() + HORIZONTAL_PADDING, 1);
+    private void renderGrid(String[][] days, int dayOfMonth, int dayOfWeek) {
+        Grid grid = new Grid(System.out, getLongestDayTitle() + HORIZONTAL_PADDING, 1);
 
         grid.setHeaderFormatter((cell, rowNumber, columnNumber) -> {
             if (Objects.equals(cell, DayOfWeek.SUNDAY.toString())) return ConsoleUtils.Color.red(cell);
@@ -76,7 +65,7 @@ public class App {
         grid.render(days);
     }
 
-    private int getMaxDayNameLength() {
+    private int getLongestDayTitle() {
         DayOfWeek[] values = DayOfWeek.values();
         int maxLength = 0;
         for (DayOfWeek value : values) {
