@@ -51,29 +51,26 @@ public class Grid {
         printRowBorder(columnCount);
 
         for (int i = 0; i < grid.length; i++) {
-            printCellPadding(columnCount);
-
             printRow(grid[i], columnCount, i);
-
-            printCellPadding(columnCount);
-
-            printRowBorder(columnCount);
         }
     }
 
     private void printRow(String[] strings, int columnCount, int i) {
+        printCellPadding(columnCount);
         for (int j = 0; j < columnCount; j++) {
             printCellContent(strings[j], i, j);
         }
         out.println();
+        printCellPadding(columnCount);
+        printRowBorder(columnCount);
     }
 
     private void printCellContent(String cellContent, int i, int j) {
         String value = cellContent;
         if (Objects.isNull(value)) value = "";
 
-        int leftPadding = getCellContentPadding(value.length(), false);
-        int rightPadding = getCellContentPadding(value.length(), true);
+        int leftPadding = (int) Math.floor(getCellContentPadding(value.length()));
+        int rightPadding = (int) Math.ceil(getCellContentPadding(value.length()));
 
         value = format(value, i, j);
 
@@ -81,11 +78,9 @@ public class Grid {
         out.print(formattedCell + horizontalSeparator);
     }
 
-    private int getCellContentPadding(int contentLength, boolean roundToCeil) {
-        int padding = (width - contentLength) / 2;
-        if (roundToCeil) {
-            padding += (width - contentLength) % 2;
-        }
+    private double getCellContentPadding(int contentLength) {
+        double padding = (width - contentLength) / 2d;
+
         return Math.max(padding, 1);
     }
 
@@ -97,7 +92,6 @@ public class Grid {
         }
         return value;
     }
-
 
     private void printCellPadding(int cellCount) {
         for (int l = 0; l < verticalPadding; l++) {

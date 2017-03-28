@@ -9,22 +9,24 @@ public class App {
     private final int HORIZONTAL_PADDING = 2;
 
     public void run(YearMonth yearMonth) {
-        int daysInMonth = yearMonth.lengthOfMonth();
-        int weekStartsOf = yearMonth.atDay(1).getDayOfWeek().getValue() - 1;
+        String[][] calendarGrid = makeCalendarGrid(yearMonth);
 
-        int rowNumber = (int) Math.ceil((weekStartsOf + daysInMonth) / 7.0) + 1;
-
-        String[][] calendarPage = new String[rowNumber][7];
-        calendarPage[0] = getHeader();
-
-        for (int i = weekStartsOf; i < daysInMonth + weekStartsOf; i++) {
-            calendarPage[i / 7 + 1][i % 7] = String.valueOf(i - weekStartsOf + 1);
-        }
-
-        renderGrid(calendarPage);
+        renderGrid(calendarGrid);
     }
 
-    private String[] getHeader() {
+    private String[][] makeCalendarGrid(YearMonth yearMonth) {
+        int daysInMonth = yearMonth.lengthOfMonth();
+        int weekStartsOf = yearMonth.atDay(1).getDayOfWeek().getValue() - 1;
+        int rowCount = (int) Math.ceil((weekStartsOf + daysInMonth) / 7.0) + 1;
+        String[][] calendarGrid = new String[rowCount][7];
+        calendarGrid[0] = getHeaderRow();
+        for (int i = weekStartsOf; i < daysInMonth + weekStartsOf; i++) {
+            calendarGrid[i / 7 + 1][i % 7] = String.valueOf(i - weekStartsOf + 1);
+        }
+        return calendarGrid;
+    }
+
+    private String[] getHeaderRow() {
         DayOfWeek[] values = DayOfWeek.values();
         String[] header = new String[DayOfWeek.values().length];
         for (int i = 0; i < values.length; i++) {
@@ -33,7 +35,7 @@ public class App {
         return header;
     }
 
-    private void renderGrid(String[][] days) {
+    private void renderGrid(String[][] calendarGrid) {
         Grid grid = new Grid(System.out, getLongestDayTitle() + HORIZONTAL_PADDING, 1);
 
         grid.setHeaderFormatter((cell, rowNumber, columnNumber) -> {
@@ -49,7 +51,7 @@ public class App {
             return cell;
         });
 
-        grid.render(days);
+        grid.render(calendarGrid);
     }
 
     private int getLongestDayTitle() {
