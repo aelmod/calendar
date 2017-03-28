@@ -21,8 +21,7 @@ public class App {
             calendarPage[i / 7 + 1][i % 7] = String.valueOf(i - weekStartsOf + 1);
         }
 
-        int today = LocalDate.now().getDayOfMonth();
-        renderGrid(calendarPage, today, weekStartsOf);
+        renderGrid(calendarPage);
     }
 
     private String[] getHeader() {
@@ -34,7 +33,7 @@ public class App {
         return header;
     }
 
-    private void renderGrid(String[][] days, int dayOfMonth, int dayOfWeek) {
+    private void renderGrid(String[][] days) {
         Grid grid = new Grid(System.out, getLongestDayTitle() + HORIZONTAL_PADDING, 1);
 
         grid.setHeaderFormatter((cell, rowNumber, columnNumber) -> {
@@ -43,16 +42,14 @@ public class App {
             return cell;
         });
 
+        final int today = LocalDate.now().getDayOfMonth();
+
         grid.setCellFormatter((cell, rowNumber, columnNumber) -> {
-            try {
-                int day = Integer.parseInt(cell);
-                if (((day + dayOfWeek) % 7 == 1) ||
-                        ((day + dayOfWeek) % 7 == 0))
-                    return ConsoleUtils.Color.red(cell);
-            } catch (NumberFormatException ignored) {}
-            if (cell.equals(String.valueOf(dayOfMonth))) return ConsoleUtils.Color.yellow(cell);
+            if (columnNumber == 5 || columnNumber == 6) return ConsoleUtils.Color.red(cell);
+            if (cell.equals(String.valueOf(today))) return ConsoleUtils.Color.yellow(cell);
             return cell;
         });
+
         grid.render(days);
     }
 
@@ -60,8 +57,7 @@ public class App {
         DayOfWeek[] values = DayOfWeek.values();
         int maxLength = 0;
         for (DayOfWeek value : values) {
-            int length = value.toString().length();
-            if (maxLength < length) maxLength = length;
+            maxLength = Math.max(value.toString().length(), maxLength);
         }
         return maxLength;
     }
