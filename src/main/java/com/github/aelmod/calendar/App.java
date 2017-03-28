@@ -2,36 +2,27 @@ package com.github.aelmod.calendar;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.Month;
+import java.time.YearMonth;
 import java.util.Objects;
 
 public class App {
 
     private final int HORIZONTAL_PADDING = 2;
 
-    public void run(Month month) {
-        int year = LocalDate.now().getYear();
-        LocalDate localDate = LocalDate.of(year, month, 1);
-        int dayOfWeek = localDate.getDayOfWeek().getValue();
-        boolean leapYear = localDate.isLeapYear();
-        int dayOfMonth = LocalDate.now().getDayOfYear() - (month.firstDayOfYear(false) - 1);
+    public void run(YearMonth yearMonth) {
+        int daysInMonth = yearMonth.lengthOfMonth();
 
-        int daysInMonth = 0;
-        int tmpCounter = 1;
         String[][] calendarPage = new String[6][DayOfWeek.values().length];
         calendarPage[0] = getHeader();
-        for (int i = 1; i < calendarPage.length; i++) {
-            for (int j = 0; j < calendarPage[i].length; j++) {
-                if (tmpCounter < dayOfWeek) {
-                    tmpCounter++;
-                    continue;
-                }
-                calendarPage[i][j] = "" + (daysInMonth + 1);
-                daysInMonth++;
-                if (daysInMonth == month.length(leapYear)) break;
-            }
+
+        int weekStartsOf = yearMonth.atDay(1).getDayOfWeek().getValue() - 1;
+
+        for (int i = weekStartsOf; i < daysInMonth + weekStartsOf; i++) {
+            calendarPage[i / 7 + 1][i % 7] = String.valueOf(i - weekStartsOf + 1);
         }
-        renderGrid(calendarPage, dayOfMonth, dayOfWeek);
+
+        int today = LocalDate.now().getDayOfMonth();
+        renderGrid(calendarPage, today, weekStartsOf);
     }
 
     private String[] getHeader() {
