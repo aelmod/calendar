@@ -6,7 +6,10 @@ import com.github.aelmod.calendar.util.ConsoleUtils;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class CalendarService {
 
@@ -17,6 +20,11 @@ public class CalendarService {
         boolean leapYear = localDate.isLeapYear();
         int dayOfMonth = LocalDate.now().getDayOfYear() - (month.firstDayOfYear(false) - 1);
 
+        String[][] days = getDays(month, dayOfWeek, leapYear);
+        renderGrid(dayOfWeek, dayOfMonth, days);
+    }
+
+    private String[][] getDays(Month month, int dayOfWeek, boolean leapYear) {
         int daysInMonth = 0;
         int tmpCounter = 1;
         String[][] days = new String[5][DayOfWeek.values().length];
@@ -31,13 +39,18 @@ public class CalendarService {
                 if (daysInMonth == month.length(leapYear)) break;
             }
         }
+        return days;
+    }
 
-        Grid grid = new Grid(System.out, 11,1);
+    private void renderGrid(int dayOfWeek, int dayOfMonth, String[][] days) {
+        Grid grid = new Grid(System.out, 11, 1);
+
         grid.setHeaderFormatter((cell, rowNumber, columnNumber) -> {
             if (Objects.equals(cell, DayOfWeek.SUNDAY.toString())) return ConsoleUtils.Color.red(cell);
             if (Objects.equals(cell, DayOfWeek.SATURDAY.toString())) return ConsoleUtils.Color.red(cell);
             return cell;
         });
+
         grid.setCellFormatter((cell, rowNumber, columnNumber) -> {
             int currentDay = 0;
             try {
@@ -50,14 +63,16 @@ public class CalendarService {
             return cell;
         });
 
-        List<String[]> calendarValues = setHeader(days);
-        grid.render(calendarValues);
+        grid.render(setHeader(toList(days)));
     }
 
-    private List<String[]> setHeader(String[][] days) {
-        List<String[]> strings = new ArrayList<>(Arrays.asList(days));
-        strings.add(0, getHeader());
-        return strings;
+    private List<String[]> setHeader(List<String[]> days) {
+        days.add(0, getHeader());
+        return days;
+    }
+
+    private List<String[]> toList(String[][] days) {
+        return new ArrayList<>(Arrays.asList(days));
     }
 
     private String[] getHeader() {
