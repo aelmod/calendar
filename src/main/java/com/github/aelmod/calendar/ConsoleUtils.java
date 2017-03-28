@@ -1,4 +1,4 @@
-package com.github.aelmod.calendar.util;
+package com.github.aelmod.calendar;
 
 import java.math.BigDecimal;
 import java.util.Scanner;

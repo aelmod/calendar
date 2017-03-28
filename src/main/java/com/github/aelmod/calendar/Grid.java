@@ -1,4 +1,4 @@
-package com.github.aelmod.calendar.grid;
+package com.github.aelmod.calendar;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -62,28 +62,32 @@ public class Grid {
 
     public void render(List<String[]> grid) {
         int sepLength = (width + horizontalSeparator.length()) * grid.get(0).length;
-        setTopHorizontalSeparator(sepLength);
+        topHorizontalSeparator(sepLength);
         for (int i = 0; i < grid.size(); i++) {
             int cellCount = grid.get(i).length;
-            setTopVerticalSeparator(cellCount);
+            topVerticalSeparator(cellCount);
             for (int j = 0; j < cellCount; j++) {
                 String value = grid.get(i)[j];
                 if (Objects.isNull(value)) value = "";
-                value = setMapper(i, j, value);
+                value = map(value, i, j);
+
                 int leftPadding = (width - value.length()) / 2;
                 leftPadding = leftPadding > 0 ? leftPadding : 1;
+
                 int rightPadding = (width - value.length()) / 2 + (width - value.length()) % 2;
                 rightPadding = rightPadding > 0 ? rightPadding : 1;
-                value = setFormatter(i, j, value);
+
+                value = format(value, i, j);
+
                 String formattedCell = String.format("%" + leftPadding + "s%s%" + rightPadding + "s", "", value, "");
                 out.print(formattedCell + horizontalSeparator);
             }
-            setVerticalPadding(cellCount);
-            setHorizontalSeparator(cellCount);
+            addVerticalPadding(cellCount);
+            addHorizontalSeparator(cellCount);
         }
     }
 
-    private String setFormatter(int i, int j, String value) {
+    private String format(String value, int i, int j) {
         if (i == 0) {
             value = headerFormatter.apply(value, i, j);
         } else {
@@ -92,7 +96,7 @@ public class Grid {
         return value;
     }
 
-    private String setMapper(int i, int j, String value) {
+    private String map(String value, int i, int j) {
         if (i == 0) {
             value = headerMapper.apply(value, i, j);
         } else {
@@ -101,14 +105,14 @@ public class Grid {
         return value;
     }
 
-    private void setTopHorizontalSeparator(int sepLength) {
+    private void topHorizontalSeparator(int sepLength) {
         for (int i = 0; i < sepLength; i++) {
             out.print(verticalSeparator);
         }
         out.println();
     }
 
-    private void setTopVerticalSeparator(int cellCount) {
+    private void topVerticalSeparator(int cellCount) {
         for (int l = 0; l < verticalPadding; l++) {
             for (int j = 0; j < cellCount; j++) {
                 out.printf("%" + width + "s" + horizontalSeparator, "");
@@ -117,14 +121,14 @@ public class Grid {
         }
     }
 
-    private void setHorizontalSeparator(int cellCount) {
+    private void addHorizontalSeparator(int cellCount) {
         for (int j = 0; j < cellCount * (width + horizontalSeparator.length()); j++) {
             out.printf(verticalSeparator);
         }
         out.println();
     }
 
-    private void setVerticalPadding(int cellCount) {
+    private void addVerticalPadding(int cellCount) {
         for (int l = 0; l < verticalPadding; l++) {
             out.println();
             for (int j = 0; j < cellCount; j++) {
