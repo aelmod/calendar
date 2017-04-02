@@ -5,7 +5,6 @@ import java.time.YearMonth;
 public class Main {
 
     public static void main(String[] args) {
-        App app = new App();
 
         YearMonth yearAndMonth;
         if (args.length != 0) {
@@ -14,6 +13,7 @@ public class Main {
             yearAndMonth = YearMonth.now();
         }
 
-        app.run(yearAndMonth);
+        MonthPrinter monthPrinter = new MonthPrinter(yearAndMonth);
+        monthPrinter.render();
     }
 }
