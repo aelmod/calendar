@@ -9,32 +9,13 @@ public class Grid {
 
     private int width;
 
-    private int verticalPadding;
-
-    private String horizontalSeparator = "||";
-
-    private String verticalSeparator = "=";
-
     private CellProcessor headerFormatter = (s, i, j) -> s;
 
     private CellProcessor cellFormatter = (s, i, j) -> s;
 
-    public Grid(PrintStream out) {
-        this(out, 5, 1);
-    }
-
-    public Grid(PrintStream out, int width, int verticalPadding) {
+    public Grid(PrintStream out, int width) {
         this.out = out;
         this.width = width;
-        this.verticalPadding = verticalPadding;
-    }
-
-    public void setHorizontalSeparator(String horizontalSeparator) {
-        this.horizontalSeparator = horizontalSeparator;
-    }
-
-    public void setVerticalSeparator(String verticalSeparator) {
-        this.verticalSeparator = verticalSeparator;
     }
 
     public void setHeaderFormatter(CellProcessor headerFormatter) {
@@ -48,21 +29,16 @@ public class Grid {
     public void render(String[][] grid) {
         int columnCount = grid[0].length;
 
-        printRowBorder(columnCount);
-
         for (int i = 0; i < grid.length; i++) {
             printRow(grid[i], columnCount, i);
         }
     }
 
     private void printRow(String[] strings, int columnCount, int i) {
-        printCellPadding(columnCount);
         for (int j = 0; j < columnCount; j++) {
             printCellContent(strings[j], i, j);
         }
         out.println();
-        printCellPadding(columnCount);
-        printRowBorder(columnCount);
     }
 
     private void printCellContent(String cellContent, int i, int j) {
@@ -75,12 +51,11 @@ public class Grid {
         value = format(value, i, j);
 
         String formattedCell = String.format("%" + leftPadding + "s%s%" + rightPadding + "s", "", value, "");
-        out.print(formattedCell + horizontalSeparator);
+        out.print(formattedCell);
     }
 
     private double getCellContentPadding(int contentLength) {
         double padding = (width - contentLength) / 2d;
-
         return Math.max(padding, 1);
     }
 
@@ -91,22 +66,6 @@ public class Grid {
             value = cellFormatter.apply(value, i, j);
         }
         return value;
-    }
-
-    private void printCellPadding(int cellCount) {
-        for (int l = 0; l < verticalPadding; l++) {
-            for (int j = 0; j < cellCount; j++) {
-                out.printf("%" + width + "s" + horizontalSeparator, "");
-            }
-            out.println();
-        }
-    }
-
-    private void printRowBorder(int cellCount) {
-        for (int j = 0; j < cellCount * (width + horizontalSeparator.length()); j++) {
-            out.printf(verticalSeparator);
-        }
-        out.println();
     }
 
     @FunctionalInterface

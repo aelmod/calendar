@@ -1,11 +1,6 @@
 package com.github.aelmod.calendar;
 
-import java.math.BigDecimal;
-import java.util.Scanner;
-
 public class ConsoleUtils {
-
-    private static Scanner scanner = new Scanner(System.in);
 
     public static class Color {
 
@@ -65,79 +60,5 @@ public class ConsoleUtils {
             }
             return color + s + RESET;
         }
-    }
-
-
-    public static int getIntFromUser() {
-        while (!scanner.hasNextInt()) {
-            scanner.next();
-            System.err.print("Wrong input, please try again: ");
-        }
-        return scanner.nextInt();
-    }
-
-    public static long getLongFromUser() {
-        while (!scanner.hasNextLong()) {
-            scanner.next();
-            System.err.print("Wrong input, please try again: ");
-        }
-        return scanner.nextLong();
-    }
-
-    public static void clearScreen() {
-        for (int i = 0; i < 40; i++) {
-            System.out.println();
-        }
-    }
-
-    public static String getLineFromUser() {
-        while (!scanner.hasNextLine()) {
-            scanner.next();
-            System.err.print("Wrong input, please try again: ");
-        }
-
-        String res;
-
-        while ((res = scanner.nextLine()).isEmpty()) ;
-
-        return res;
-    }
-
-    public static String getWordFromUser() {
-        String res;
-
-        while ((res = scanner.next()).isEmpty()) ;
-
-        return res;
-    }
-
-    /**
-     * @param min Min acceptable value
-     * @param max Max acceptable value
-     * @return inputted number from user
-     */
-    public static int getIntFromUser(int min, int max) {
-        int inputtedNumber = getIntFromUser();
-        while (inputtedNumber < min || inputtedNumber > max) {
-            System.err.print("Wrong input, please try again: ");
-            inputtedNumber = getIntFromUser();
-        }
-        return inputtedNumber;
-    }
-
-    public static double getDoubleFromUser() {
-        while (!scanner.hasNextDouble()) {
-            scanner.next();
-            System.err.print("Wrong input, please try again: ");
-        }
-        return scanner.nextDouble();
-    }
-
-    public static BigDecimal getBigDecimalFromUser() {
-        while (!scanner.hasNextBigDecimal()) {
-            scanner.next();
-            System.err.print("Wrong input, please try again: ");
-        }
-        return scanner.nextBigDecimal();
     }
 }

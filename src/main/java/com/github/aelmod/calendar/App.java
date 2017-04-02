@@ -6,8 +6,6 @@ import java.time.YearMonth;
 
 public class App {
 
-    private final int HORIZONTAL_PADDING = 2;
-
     public void run(YearMonth yearMonth) {
         String[][] calendarGrid = makeCalendarGrid(yearMonth);
 
@@ -23,6 +21,7 @@ public class App {
         for (int i = weekStartsOf; i < daysInMonth + weekStartsOf; i++) {
             calendarGrid[i / 7 + 1][i % 7] = String.valueOf(i - weekStartsOf + 1);
         }
+
         return calendarGrid;
     }
 
@@ -30,24 +29,22 @@ public class App {
         DayOfWeek[] values = DayOfWeek.values();
         String[] header = new String[DayOfWeek.values().length];
         for (int i = 0; i < values.length; i++) {
-            header[i] = values[i].toString();
+            header[i] = values[i].toString().substring(0, 3);
         }
         return header;
     }
 
     private void renderGrid(String[][] calendarGrid) {
-        Grid grid = new Grid(System.out, getLongestDayTitle() + HORIZONTAL_PADDING, 1);
+        Grid grid = new Grid(System.out, getLongestDayTitle());
 
         grid.setHeaderFormatter((cell, rowNumber, columnNumber) -> {
-            if (columnNumber == 5 || columnNumber == 6) return ConsoleUtils.Color.red(cell);
+            if (isWeekEnd(columnNumber)) return ConsoleUtils.Color.red(cell);
             return cell;
         });
 
-        final int today = LocalDate.now().getDayOfMonth();
-
         grid.setCellFormatter((cell, rowNumber, columnNumber) -> {
-            if (columnNumber == 5 || columnNumber == 6) return ConsoleUtils.Color.red(cell);
-            if (cell.equals(String.valueOf(today))) return ConsoleUtils.Color.yellow(cell);
+            if (isToday(cell)) return ConsoleUtils.Color.yellow(cell);
+            if (isWeekEnd(columnNumber)) return ConsoleUtils.Color.red(cell);
             return cell;
         });
 
@@ -58,8 +55,17 @@ public class App {
         DayOfWeek[] values = DayOfWeek.values();
         int maxLength = 0;
         for (DayOfWeek value : values) {
-            maxLength = Math.max(value.toString().length(), maxLength);
+            maxLength = Math.max(value.toString().substring(0, 5).length(), maxLength);
         }
         return maxLength;
+    }
+
+    private boolean isWeekEnd(int day) {
+        return day > 0 && ((DayOfWeek.of(day + 1) == DayOfWeek.SATURDAY) || DayOfWeek.of(day + 1) == DayOfWeek.SUNDAY);
+    }
+
+    private boolean isToday(String day) {
+        final int today = LocalDate.now().getDayOfMonth();
+        return day.equals(String.valueOf(today));
     }
 }
